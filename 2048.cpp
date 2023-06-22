@@ -1,4 +1,4 @@
-﻿#include <bits/stdc++.h>
+#include <bits/stdc++.h>
 #include <easyx.h>
 #include <conio.h>
 #define colorone RGB(66,133,244)
@@ -18,42 +18,38 @@
 
 using namespace std;
 
-int a[10][10], s;
+int a[10][10], star, mx;
 const int AK = 75, SK = 80, DK = 77, WK = 72;
+fstream  ho("Stars.txt", ios::out | ios::app);
+ifstream hi("Stars.txt");
+LPCWSTR stringToLPCWSTR(std::string orig)
+{
+	size_t origsize = orig.length() + 1;
+	const size_t newsize = 100;
+	size_t convertedChars = 0;
+	wchar_t* wcstring = (wchar_t*)malloc(sizeof(wchar_t) * (orig.length() - 1));
+	mbstowcs_s(&convertedChars, wcstring, origsize, orig.c_str(), _TRUNCATE);
+	return wcstring;
+}
 LPCTSTR number_to_string(int num) {
-	switch (num) {
-	case 0:return L"0";
-	case 2:return L"2";
-	case 4:return L"4";
-	case 8:return L"8";
-	case 16:return L"16";
-	case 32:return L"32";
-	case 64:return L"64";
-	case 128:return L"128";
-	case 256:return L"256";
-	case 512:return L"512";
-	case 1024:return L"1024";
-	case 2048:return L"2048";
-	case 4096:return L"4096";
-	default: return 0;
-	}
+	return stringToLPCWSTR(to_string(num));
 }
 COLORREF GetNumberColor(int num) {
 	switch (num) {
-		case 0:return colorplaid;
-		case 2:return colorone;
-		case 4:return colortwo;
-		case 8:return colorthree;
-		case 16:return colorfour;
-		case 32:return colorfive;
-		case 64:return colorsix;
-		case 128:return colorseven;
-		case 256:return coloreight;
-		case 512:return colornine;
-		case 1024:return colorten;
-		case 2048:return coloreleven;
-		case 4096:return colortwelve;
-		default: return colorplaid;
+	case 0:return colorplaid;
+	case 2:return colorone;
+	case 4:return colortwo;
+	case 8:return colorthree;
+	case 16:return colorfour;
+	case 32:return colorfive;
+	case 64:return colorsix;
+	case 128:return colorseven;
+	case 256:return coloreight;
+	case 512:return colornine;
+	case 1024:return colorten;
+	case 2048:return coloreleven;
+	case 4096:return colortwelve;
+	default: return colorplaid;
 	}
 }
 int startx(int num) {
@@ -62,12 +58,31 @@ int startx(int num) {
 	if (num <= 999)return 80;
 	return 60;
 }
+void showhistory() {
+	stack<int> stk;
+	int tmp;
+	while (hi >> tmp) {
+		stk.push(tmp);
+		mx = max(mx, tmp);
+	}
+	int n = (stk.size() >= 5) ? 6 : stk.size() + 1;
+	for (int i = 1; i <= 5 && !stk.empty(); ++i) {
+		int t = stk.top();
+		stk.pop();
+		outtextxy(990, 330 + (n - i) * 30, number_to_string(t));
+	}
+}
 void startprogram() {
-	initgraph(880, 880);
+	initgraph(1200, 880, EX_SHOWCONSOLE);
 	setbkmode(TRANSPARENT);
-	settextstyle(70, 0, L"Cascadia Code");
 	HWND hnd = GetHWnd();
 	SetWindowText(hnd, L"2048 Games");
+	setfillcolor(colorframe);
+	settextstyle(30, 0, L"Cascadia code");
+	fillroundrect(880, 286, 1150, 571, 10, 10);
+	outtextxy(960, 336, L"history:");
+	showhistory();
+	settextstyle(70, 0, L"Cascadia code");
 }
 void paint_rectangle(COLORREF clr, int x, int y)
 {
@@ -99,13 +114,22 @@ void draw_mainwindow() {
 	print_line(2, 30, 233);
 	print_line(3, 30, 436);
 	print_line(4, 30, 639);
-	system("cls");
-	cout << "Stars:" << s << endl;
+	setfillcolor(colorframe);
+	settextstyle(30, 0, L"Cascadia code");
+	fillroundrect(880, 15, 1150, 285, 10, 10);
+	outtextxy(980, 50, L"Stars:");
+	fillroundrect(880, 572, 1150, 842, 10, 10);
+	outtextxy(950, 622, L"Max Stars:");
+	settextstyle(100, 0, L"Cascadia code");
+	mx = max(mx, star);
+	outtextxy(900, 50, number_to_string(star));
+	outtextxy(900, 700, number_to_string(mx));
+	settextstyle(70, 0, L"Cascadia code");
 }
 void newnum() {
 	int x, y;
 	do {
-		x = rand() & 3, y = rand() & 3;
+		x = rand() % 4, y = rand() % 4;
 		x++; y++;
 	} while (a[x][y]);
 	a[x][y] = rand() & 1 ? 4 : 2;
@@ -126,7 +150,7 @@ void moveleft() {
 			if (y > 1 && a[x][y - 1] == a[x][y]) {
 				a[x][y - 1] += a[x][y];
 				a[x][y] = 0;
-				s += a[x][y - 1];
+				star += a[x][y - 1];
 			}
 		}
 }
@@ -142,7 +166,7 @@ void movedown() {
 			if (x <= 4 && a[x + 1][y] == a[x][y]) {
 				a[x + 1][y] += a[x][y];
 				a[x][y] = 0;
-				s += a[x + 1][y];
+				star += a[x + 1][y];
 			}
 		}
 }
@@ -158,7 +182,7 @@ void moveright() {
 			if (y <= 4 && a[x][y + 1] == a[x][y]) {
 				a[x][y + 1] += a[x][y];
 				a[x][y] = 0;
-				s += a[x][y + 1];
+				star += a[x][y + 1];
 			}
 		}
 }
@@ -174,7 +198,7 @@ void moveup() {
 			if (x > 0 && a[x - 1][y] == a[x][y]) {
 				a[x - 1][y] += a[x][y];
 				a[x][y] = 0;
-				s += a[x - 1][y];
+				star += a[x - 1][y];
 			}
 		}
 }
@@ -184,6 +208,7 @@ bool chk() {
 			if (a[i - 1][j] == a[i][j] || a[i + 1][j] == a[i][j] || a[i][j - 1] == a[i][j] || a[i][j + 1] == a[i][j] || a[i][j] == 0)
 				return 1;
 	MessageBox(0, L"Game Over!", L"overed", MB_OK);
+	ho << star << endl;
 	closegraph();
 	return 0;
 }
@@ -194,9 +219,11 @@ void Game() {
 		if (cc == 224)opt = _getch();
 		else opt = cc;
 		if (opt != 27 && opt != 'a' && opt != 's' && opt != 'd' && opt != 'w' && opt != 'A' && opt != 'W' && opt != 'S' && opt != 'D' && opt != 'q' && opt != 'Q' && opt != 72 && opt != 75 && opt != 77 && opt != 80)continue;
-		if(opt == 'q' || opt == 'Q' || opt == 27) {
-			MessageBox(0, L"Game Over!", L"overed", MB_OK);
+		if (opt == 'q' || opt == 'Q' || opt == 27) {
+			MessageBox(0, L"Game Over!", L"oops!", MB_OK);
 			closegraph();
+			ho << star << endl;
+			break;
 		}
 		if (opt == 'a' || opt == 'A' || opt == AK) {
 			moveleft();
@@ -220,9 +247,10 @@ void Game() {
 int main() {
 	srand(time(0));
 	startprogram();
+	draw_mainwindow();
 	newnum();
 	newnum();
 	Game();
-	closegraph();
+	system("pause");
 	return 0;
 }
