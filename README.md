@@ -4,7 +4,6 @@
 通过ASDW或方向键移动，按Q或ESC结束。
 尽情玩游戏之前请注意，你需要在黑窗口里面输入方向，不然你会发现界面怎么一动不动呢。
 ## 运行方式
-有兴趣自己运行的人可以看一下。
 ### 运行方式1
 #### 1.安装Visual Studio
   下载链接:[Visual Studio](https://visualstudio.microsoft.com)。
