@@ -3,8 +3,6 @@
 在学习EasyX的路上成功创作的第一个游戏，灵感来自[Elgoog](https://elgoog.im/2048)。
 通过ASDW或方向键移动，按Q或ESC结束。
 尽情玩游戏之前请注意，你需要在黑窗口里面输入方向，不然你会发现界面怎么一动不动呢。
-## 运行界面  
-![](https://cdn.luogu.com.cn/upload/image_hosting/n9ust3gi.png)
 ## 运行方式
 ### 1.安装Visual Studio
   下载链接:[Visual Studio](https://visualstudio.microsoft.com)。
